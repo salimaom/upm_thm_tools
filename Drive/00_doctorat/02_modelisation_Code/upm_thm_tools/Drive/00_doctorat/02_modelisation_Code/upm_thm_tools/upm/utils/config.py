@@ -28,7 +28,14 @@ def load_config(simulation_config_path):
     -------
     dict
         Merged configuration dictionary.
+
+    Example
+    -------
+    config = load_config('notebooks/01_article1_TH/config_benchmark.json')
+    permeability = config['rock_types']['granite']['permeability_m2']
+    run_thermal  = config['physics']['thermal']
     """
+
     # load simulation config
     sim_config = _load_json(simulation_config_path)
 
@@ -57,6 +64,7 @@ def load_config(simulation_config_path):
     # add resolved simulation directory
     config['_sim_dir'] = os.path.dirname(
                          os.path.abspath(simulation_config_path))
+
     return config
 
 
@@ -76,6 +84,11 @@ def get_fracture_properties(config, fracture_type):
     -------
     dict
         Properties for the requested fracture type.
+
+    Example
+    -------
+    props = get_fracture_properties(config, 'fault_zone')
+    aperture = props['aperture_m']
     """
     fracture_types = config.get('fracture_types', {})
     if fracture_type not in fracture_types:
@@ -102,6 +115,11 @@ def get_rock_properties(config, rock_type):
     -------
     dict
         Properties for the requested rock type.
+
+    Example
+    -------
+    props = get_rock_properties(config, 'gabbro')
+    porosity = props['porosity']
     """
     rock_types = config.get('rock_types', {})
     if rock_type not in rock_types:
@@ -151,6 +169,11 @@ def is_module_active(config, module_name):
     -------
     bool
         True if module is active, False otherwise.
+
+    Example
+    -------
+    if is_module_active(config, 'thermal'):
+        run_thermal_solver()
     """
     physics = config.get('physics', {})
     return physics.get(module_name, False)

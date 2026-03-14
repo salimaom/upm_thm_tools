@@ -1,0 +1,103 @@
+{
+    "fracture_types": {
+        "fault_zone": {
+            "description": "Large scale fault zone",
+            "aperture_m": 0.002,
+            "equivalent_width_m": 0.5,
+            "permeability_m2": 3.33e-7,
+            "porosity": 1.0,
+            "thermal_conductivity": 0.6,
+            "heat_capacity": 4200,
+            "JRC": 4,
+            "JCS_MPa": 80
+        },
+        "joint_family_1": {
+            "description": "Primary joint set",
+            "aperture_m": 0.0001,
+            "equivalent_width_m": 0.01,
+            "permeability_m2": 8.33e-13,
+            "porosity": 1.0,
+            "thermal_conductivity": 0.6,
+            "heat_capacity": 4200,
+            "JRC": 8,
+            "JCS_MPa": 100
+        },
+        "joint_family_2": {
+            "description": "Secondary joint set",
+            "aperture_m": 0.0003,
+            "equivalent_width_m": 0.02,
+            "permeability_m2": 7.5e-12,
+            "porosity": 1.0,
+            "thermal_conductivity": 0.6,
+            "heat_capacity": 4200,
+            "JRC": 12,
+            "JCS_MPa": 90
+        },
+        "random_joint": {
+            "description": "Random background fractures",
+            "aperture_mean_m": 0.0001,
+            "aperture_std_m": 0.00005,
+            "equivalent_width_m": 0.005,
+            "permeability_m2": 8.33e-13,
+            "porosity": 1.0,
+            "thermal_conductivity": 0.6,
+            "heat_capacity": 4200,
+            "JRC": 6,
+            "JCS_MPa": 95
+        }
+    },
+
+    "rock_types": {
+        "granite": {
+            "permeability_m2": 1e-18,
+            "porosity": 0.01,
+            "thermal_conductivity": 3.0,
+            "heat_capacity": 790,
+            "density": 2650
+        },
+        "gabbro": {
+            "permeability_m2": 1e-19,
+            "porosity": 0.005,
+            "thermal_conductivity": 2.5,
+            "heat_capacity": 750,
+            "density": 2900
+        },
+        "basalt": {
+            "permeability_m2": 5e-18,
+            "porosity": 0.02,
+            "thermal_conductivity": 2.0,
+            "heat_capacity": 840,
+            "density": 2800
+        },
+        "peridotite": {
+            "permeability_m2": 1e-20,
+            "porosity": 0.003,
+            "thermal_conductivity": 3.5,
+            "heat_capacity": 720,
+            "density": 3300
+        }
+    },
+
+    "fluid": {
+        "water": {
+            "density": 1000,
+            "viscosity": 1e-3,
+            "thermal_conductivity": 0.6,
+            "heat_capacity": 4200
+        },
+        "ice": {
+            "density": 917,
+            "thermal_conductivity": 2.2,
+            "heat_capacity": 2090,
+            "latent_heat_J_kg": 334000
+        }
+    },
+
+    "freezing": {
+        "melting_temperature_K": 273.15,
+        "residual_water_saturation": 0.01,
+        "W_parameter": 0.3,
+        "omega_impedance": 10,
+        "clapeyron_coefficient": -1.22e6
+    }
+}
