@@ -1,0 +1,56 @@
+{
+    "project": "raglan_phd",
+    "simulation_name": "default",
+
+    "physics": {
+        "flow": true,
+        "thermal": false,
+        "phase_change": false,
+        "mechanical": false,
+        "excavation": false
+    },
+
+    "freezing_options": {
+        "ice_saturation": false,
+        "clapeyron": false,
+        "impedance_function": false,
+        "aperture_update": false,
+        "ice_jacking_check": false,
+        "cryo_suction": false
+    },
+
+    "boundary_conditions": {
+        "piezometers_from_sql": false,
+        "fixed_pressure_nodes": [],
+        "thermal_gradient": false,
+        "inlet_temperature_K": 273.15
+    },
+
+    "solver": {
+        "transient": true,
+        "iterative_thm": false,
+        "max_iterations": 50,
+        "tolerance": 1e-6,
+        "time_steps": 100,
+        "dt_days": 1.0,
+        "implicit_scheme": true
+    },
+
+    "output": {
+        "save_pressure": true,
+        "save_temperature": false,
+        "save_ice_saturation": false,
+        "save_aperture": false,
+        "save_flow_rates": true,
+        "format": "csv",
+        "vtk_export": false,
+        "hdf5_export": false,
+        "output_dir": "C:/Users/salim/results_raglan/"
+    },
+
+    "hpc": {
+        "parallel": false,
+        "mpi": false,
+        "n_cores": 1
+    }
+}
