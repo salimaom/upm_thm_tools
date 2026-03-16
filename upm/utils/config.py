@@ -259,7 +259,84 @@ def print_config_summary(config):
 
 
 # private helper functions
+def is_matrix_active(config):
+    """
+    Check if rock matrix is included in simulation.
 
+    Parameters
+    ----------
+    config : dict
+        Loaded configuration dictionary.
+
+    Returns
+    -------
+    bool
+        True if matrix is included, False otherwise.
+
+    Example
+    -------
+    if is_matrix_active(config):
+        build_voronoi_mesh(nodes, config)
+    """
+    matrix = config.get('matrix', {})
+    return matrix.get('include_matrix', False)
+
+
+def get_fracture_scale(config):
+    """
+    Get fracture network scale.
+
+    Parameters
+    ----------
+    config : dict
+        Loaded configuration dictionary.
+
+    Returns
+    -------
+    str
+        'local'    - 1D pipes, DFN around excavation
+        'regional' - triangular mesh, large fault zones
+    """
+    dfn = config.get('fracture_network', {})
+    return dfn.get('scale', 'local')
+
+
+def get_simulation_mode(config):
+    """
+    Returns a summary string of the active simulation mode.
+
+    Parameters
+    ----------
+    config : dict
+        Loaded configuration dictionary.
+
+    Returns
+    -------
+    str
+        'flow_only'           - flow in fractures only
+        'flow_heat_fracture'  - flow + heat in fractures
+        'flow_heat_matrix'    - flow + heat + matrix
+        'full_thm'            - complete THM with freezing
+
+    Example
+    -------
+    mode = get_simulation_mode(config)
+    print(f"Running in mode: {mode}")
+    """
+    flow    = is_module_active(config, 'flow')
+    thermal = is_module_active(config, 'thermal')
+    matrix  = is_matrix_active(config)
+    freeze  = is_module_active(config, 'phase_change')
+
+    if freeze:
+        return 'full_thm'
+    elif thermal and matrix:
+        return 'flow_heat_matrix'
+    elif thermal:
+        return 'flow_heat_fracture'
+    else:
+        return 'flow_only'
+    
 def _load_json(path):
     """Load a JSON file and return as dictionary."""
     if not os.path.exists(path):
