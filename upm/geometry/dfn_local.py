@@ -394,39 +394,43 @@ def build_local_pipe_network(df, config):
 
         # pipe 1: center_i → midpoint
         length_i = np.linalg.norm(centers[i] - midpoint)
-        if length_i > 1e-10:
-            pipe_i = Pipe(
-                pipe_id   = pipe_id,
-                node_i    = center_node_ids[i],
-                node_j    = inter_node_id,
-                length    = length_i,
-                aperture  = aperture_i,
-                width     = aperture_i,
-                pipe_type = 'fracture',
-                fracture_i = i,
-                fracture_j = j
-            )
-            pipes.append(pipe_i)
-            pipe_id += 1
-            n_pipes += 1
+        if length_i < 1e-6:
+            length_i = 1e-6  # minimum pipe length
+
+        pipe_i = Pipe(
+            pipe_id   = pipe_id,
+            node_i    = center_node_ids[i],
+            node_j    = inter_node_id,
+            length    = length_i,
+            aperture  = aperture_i,
+            width     = aperture_i,
+            pipe_type = 'fracture',
+            fracture_i = i,
+            fracture_j = j
+        )
+        pipes.append(pipe_i)
+        pipe_id += 1
+        n_pipes += 1
 
         # pipe 2: center_j → midpoint
         length_j = np.linalg.norm(centers[j] - midpoint)
-        if length_j > 1e-10:
-            pipe_j = Pipe(
-                pipe_id   = pipe_id,
-                node_i    = center_node_ids[j],
-                node_j    = inter_node_id,
-                length    = length_j,
-                aperture  = aperture_j,
-                width     = aperture_j,
-                pipe_type = 'fracture',
-                fracture_i = j,
-                fracture_j = i
-            )
-            pipes.append(pipe_j)
-            pipe_id += 1
-            n_pipes += 1
+        if length_j < 1e-6:
+            length_j = 1e-6  # minimum pipe length
+
+        pipe_j = Pipe(
+            pipe_id   = pipe_id,
+            node_i    = center_node_ids[j],
+            node_j    = inter_node_id,
+            length    = length_j,
+            aperture  = aperture_j,
+            width     = aperture_j,
+            pipe_type = 'fracture',
+            fracture_i = j,
+            fracture_j = i
+        )
+        pipes.append(pipe_j)
+        pipe_id += 1
+        n_pipes += 1
 
     print(f"  Found {n_intersections} fracture intersections")
     print(f"  Created {n_pipes} fracture pipes")
