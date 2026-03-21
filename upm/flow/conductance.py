@@ -162,24 +162,25 @@ def compute_viscosity_water(temperature_K):
 # EFFECTIVE APERTURE WITH FREEZING
 # ─────────────────────────────────────────────────────────────────
 
-def compute_effective_aperture(aperture, ice_saturation, omega=10.0):
+def compute_effective_aperture(aperture, ice_saturation):
     """
-    Compute effective hydraulic aperture accounting for ice.
+    Compute effective hydraulic aperture accounting for ice
+    in fracture using cubic law geometry.
 
-    Hydraulic impedance function:
-        a_eff = a · (1 - S_ice)^omega
+    Ice fills the fracture aperture, reducing it:
+        a_eff = a * (1 - S_ice)^(1/3)
 
-    where omega is the impedance parameter (Hansson parameter).
-    Higher omega → stronger reduction of flow by ice.
+    This gives naturally via cubic law:
+        K_eff = a_eff³ * w / (12μL)
+              = a³ * (1 - S_ice) * w / (12μL)
+              = K_0 * (1 - S_ice)
 
     Parameters
     ----------
     aperture : float or numpy.ndarray
         Mechanical hydraulic aperture (m).
     ice_saturation : float or numpy.ndarray
-        Ice saturation S_ice (0 = no ice, 1 = fully frozen).
-    omega : float
-        Impedance parameter (default 10, from config).
+        Ice saturation S_ice (0=no ice, 1=fully frozen).
 
     Returns
     -------
@@ -188,22 +189,23 @@ def compute_effective_aperture(aperture, ice_saturation, omega=10.0):
 
     Example
     -------
-    a_eff = compute_effective_aperture(0.001, 0.5, omega=10)
-    print(f"Effective aperture: {a_eff*1000:.4f} mm")
+    a_eff = compute_effective_aperture(0.001, 0.5)
+    # a_eff = 0.001 * (0.5)^(1/3) = 0.000794 m
+    # K_eff = K_0 * 0.5  (linear reduction)
     """
     ice_saturation = np.clip(ice_saturation, 0.0, 1.0)
-    return aperture * (1.0 - ice_saturation) ** omega
+    return aperture * (1.0 - ice_saturation) ** (1.0/3.0)
 
 
 def compute_conductance_frozen(aperture, width, length,
-                                viscosity, ice_saturation,
-                                omega=10.0):
+                                viscosity, ice_saturation):
     """
     Compute hydraulic conductance with ice effect.
 
-    Combines effective aperture and variable viscosity:
-        a_eff = a · (1 - S_ice)^omega
-        K = a_eff³ · w / (12 · mu · L)
+    Uses cubic law with reduced aperture:
+        a_eff = a * (1 - S_ice)^(1/3)
+        K = a_eff³ * w / (12 * mu * L)
+          = K_0 * (1 - S_ice)
 
     Parameters
     ----------
@@ -214,25 +216,16 @@ def compute_conductance_frozen(aperture, width, length,
     length : float
         Pipe length (m).
     viscosity : float
-        Dynamic viscosity (Pa·s).
+        Dynamic viscosity (Pa.s).
     ice_saturation : float
         Ice saturation (0 to 1).
-    omega : float
-        Impedance parameter (default 10).
 
     Returns
     -------
     float
-        Hydraulic conductance with ice effect (m³/Pa·s).
-
-    Example
-    -------
-    K_frozen = compute_conductance_frozen(
-        aperture=0.001, width=0.001, length=5.0,
-        viscosity=1e-3, ice_saturation=0.3, omega=10
-    )
+        Hydraulic conductance with ice effect (m3/Pa.s).
     """
-    a_eff = compute_effective_aperture(aperture, ice_saturation, omega)
+    a_eff = compute_effective_aperture(aperture, ice_saturation)
     return compute_conductance(a_eff, width, length, viscosity)
 
 
@@ -272,9 +265,7 @@ def assign_conductances(pipes, config, ice_saturations=None):
     fluid = config.get('fluid', {}).get('water', {})
     mu    = fluid.get('viscosity', 1e-3)
 
-    # get freezing params from config
-    freezing = config.get('freezing', {})
-    omega    = freezing.get('omega_impedance', 10.0)
+    
 
     # check if freezing is active
     phase_change = config.get('physics', {}).get('phase_change', False)
@@ -291,8 +282,7 @@ def assign_conductances(pipes, config, ice_saturations=None):
                 length         = pipe.length,
                 viscosity      = mu,
                 ice_saturation = S_ice,
-                omega          = omega
-            )
+                        )
         else:
             pipe.conductance = compute_conductance(
                 aperture  = pipe.aperture,
