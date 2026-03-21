@@ -1,0 +1,12 @@
+numpy
+scipy
+matplotlib
+pandas
+plotly
+ezdxf
+shapely
+tqdm
+pyodbc
+sqlalchemy
+h5py
+pytest
